@@ -1,2 +1,2 @@
-# strivinglife-libgdx-demos
+# Strivinglife libGDX Demos
 Assorted libGDX functionality testing/demos.
