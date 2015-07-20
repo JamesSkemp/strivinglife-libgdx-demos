@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -77,7 +76,6 @@ public class TappingDemoScreen implements Screen {
 
 	@Override
 	public void show() {
-
 	}
 
 	@Override
@@ -100,27 +98,20 @@ public class TappingDemoScreen implements Screen {
 
 	@Override
 	public void pause() {
-
 	}
 
 	@Override
 	public void resume() {
-
 	}
 
 	@Override
 	public void hide() {
-
 	}
 
 	@Override
 	public void dispose() {
-		// This may not be necessary for what we're doing, but dispose of our two boxes.
-		for (Actor actor : stage.getActors()) {
-			if (actor.getClass() == Box.class) {
-				((Box)actor).dispose();
-			}
-		}
+		box1.dispose();
+		box2.dispose();
 
 		stage.dispose();
 	}
