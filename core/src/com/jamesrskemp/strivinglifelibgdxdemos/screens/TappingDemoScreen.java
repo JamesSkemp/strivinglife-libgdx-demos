@@ -7,11 +7,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.jamesrskemp.strivinglifelibgdxdemos.SLDGame;
 import com.jamesrskemp.strivinglifelibgdxdemos.objects.Box;
+
+import javafx.scene.text.TextAlignment;
 
 /**
  * This demo showcases functionality to track how many times an image (actor) has been clicked on.
@@ -66,12 +71,37 @@ public class TappingDemoScreen implements Screen {
 		box2.setPosition(Gdx.graphics.getWidth() - box2.getWidth(), Gdx.graphics.getHeight() / 2 - box2.getHeight() / 2);
 		stage.addActor(box2);
 
+		addMenuButton();
+
 		// Create a multiplexer so we can later handle multiple processors (such as a camera or HUD).
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		// We want our boxes to respond to touch, so add the stage as an input processor.
 		inputMultiplexer.addProcessor(stage);
 
 		Gdx.input.setInputProcessor(inputMultiplexer);
+	}
+
+	/**
+	 * Adds a button to the display to go back to the main menu.
+	 */
+	private void addMenuButton() {
+		TextButton.TextButtonStyle textButtonStyle;
+		textButtonStyle = new TextButton.TextButtonStyle();
+		textButtonStyle.font = new BitmapFont();
+		textButtonStyle.fontColor = Color.WHITE;
+
+		TextButton exitButton = new TextButton("Back to the Menu", textButtonStyle);
+		exitButton.pad(1.0f);
+		exitButton.setPosition(stage.getWidth() - exitButton.getWidth(), 0);
+
+		exitButton.addListener(new ActorGestureListener() {
+			@Override
+			public void tap(InputEvent event, float x, float y, int count, int button) {
+				game.setScreen(new MenuScreen(game));
+			}
+		});
+
+		stage.addActor(exitButton);
 	}
 
 	@Override
@@ -83,7 +113,7 @@ public class TappingDemoScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		stage.act();
+		stage.act(delta);
 		stage.draw();
 
 		if (box1.totalTaps > 0 || box2.totalTaps > 0) {

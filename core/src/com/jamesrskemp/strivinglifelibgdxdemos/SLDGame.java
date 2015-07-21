@@ -2,7 +2,7 @@ package com.jamesrskemp.strivinglifelibgdxdemos;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.jamesrskemp.strivinglifelibgdxdemos.screens.TappingDemoScreen;
+import com.jamesrskemp.strivinglifelibgdxdemos.screens.MenuScreen;
 
 public class SLDGame extends Game {
 	public SpriteBatch batch;
@@ -10,7 +10,7 @@ public class SLDGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		this.setScreen(new TappingDemoScreen(this));
+		this.setScreen(new MenuScreen(this));
 	}
 
 	@Override
