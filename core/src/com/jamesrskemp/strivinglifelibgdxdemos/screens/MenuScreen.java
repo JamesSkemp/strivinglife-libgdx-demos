@@ -48,10 +48,19 @@ public class MenuScreen implements Screen {
 			}
 		});
 
-		table.add(tappingDemoButton)
-				//.expandX()
-				.expandY()
-				.top().center();
+		TextButton timerDemoButton = new TextButton("Timer Demo", textButtonStyle);
+		timerDemoButton.addListener(new ActorGestureListener() {
+			@Override
+			public void tap(InputEvent event, float x, float y, int count, int button) {
+				game.setScreen(new TimerDemoScreen(game));
+			}
+		});
+
+		table.defaults().expandY().top().center();
+
+		table.add(tappingDemoButton);
+		table.row();
+		table.add(timerDemoButton);
 
 		stage.addActor(table);
 
