@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.jamesrskemp.strivinglifelibgdxdemos.SLDGame;
+import com.jamesrskemp.strivinglifelibgdxdemos.objects.Box;
 
 /**
  * Created by James on 7/23/2015.
@@ -34,6 +35,8 @@ public class TimerDemoScreen implements Screen {
 	Stage stage;
 
 	Label informationLabel;
+	Box box1;
+	Box box2;
 
 	public TimerDemoScreen(final SLDGame game) {
 		this.game = game;
@@ -54,6 +57,18 @@ public class TimerDemoScreen implements Screen {
 		stage.addActor(informationLabel);
 
 		camera.update();
+
+		// Create a box to display in the left half of the screen.
+		box1 = new Box();
+		box1.setName("box1");
+		box1.setPosition(0, Gdx.graphics.getHeight() / 2 - box1.getHeight() / 2);
+		stage.addActor(box1);
+
+		// Create another box to display in the right half of the screen.
+		box2 = new Box();
+		box2.setName("box2");
+		box2.setPosition(Gdx.graphics.getWidth() - box2.getWidth(), Gdx.graphics.getHeight() / 2 - box2.getHeight() / 2);
+		stage.addActor(box2);
 
 		addMenuButton();
 
@@ -99,6 +114,10 @@ public class TimerDemoScreen implements Screen {
 
 		stage.act(delta);
 		stage.draw();
+
+		if (box1.totalTaps > 0 || box2.totalTaps > 0) {
+			informationLabel.setText(String.format("Box 1 has %s taps and box 2 has %s taps.", box1.totalTaps, box2.totalTaps));
+		}
 	}
 
 	@Override
@@ -120,6 +139,8 @@ public class TimerDemoScreen implements Screen {
 
 	@Override
 	public void dispose() {
+		box1.dispose();
+		box2.dispose();
 		stage.dispose();
 	}
 }
