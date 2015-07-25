@@ -64,7 +64,18 @@ public class TimerDemoScreen implements Screen {
 		box1.setPosition(0, Gdx.graphics.getHeight() / 2 - box1.getHeight() / 2);
 		stage.addActor(box1);
 
-		box1.enableAutomaticTapping(1, 5, 5, true);
+		box1.addListener(new ActorGestureListener() {
+			@Override
+			public void tap(InputEvent event, float x, float y, int count, int button) {
+				if (!box1.isAutoTapPaused()) {
+					box1.pauseAutomaticTapping();
+				} else {
+					box1.resumeAutomaticTapping();
+				}
+				//super.tap(event, x, y, count, button);
+			}
+		});
+		box1.enableAutomaticTapping(1);
 
 		// Create another box to display in the right half of the screen.
 		box2 = new Box();

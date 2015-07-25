@@ -25,17 +25,28 @@ public class Box extends Actor implements Disposable {
 	 * If true, this will automatically generate taps per second.
 	 */
 	private boolean autoTap;
+	/**
+	 * If true the automatic tapping has been paused.
+	 */
 	private boolean autoTapPaused;
-	private float tapsPerSecond;
-	private float actionTime;
-	private float actionPause;
-	private boolean actionRepeat;
+	/**
+	 * Number of automatic taps per second.
+	 */
+	private float autoTapsPerSecond;
+
+	/**
+	 * Get whether automatic tapping has been enabled, but paused.
+	 * @return True if automatic tapping has been enabled, but is paused.
+	 */
+	public boolean isAutoTapPaused()
+	{
+		return autoTap && autoTapPaused;
+	}
 
 	/**
 	 * Image to be used when rendering this object.
 	 */
 	Texture img;
-
 
 	Timer autoTapTimer;
 	Timer.Task autoTapTimerTask;
@@ -68,68 +79,50 @@ public class Box extends Actor implements Disposable {
 		this.totalTaps += taps;
 	}
 
-	public void enableAutomaticTapping(){
-		enableAutomaticTapping(this.tapsPerSecond, this.actionTime, this.actionPause, this.actionRepeat);
-	}
+	/**
+	 * Enables automatic tapping on the object.
+	 * @param autoTapsPerSecond Number of taps to register per second.
+	 */
+	public void enableAutomaticTapping(final float autoTapsPerSecond) {
+		if (!this.autoTap) {
+			this.autoTap = true;
+			this.autoTapPaused = false;
+			this.autoTapsPerSecond = autoTapsPerSecond;
 
-	public void enableAutomaticTapping(final float tapsPerSecond, final float actionTime, final float actionPause, boolean actionRepeat) {
-		this.autoTap = true;
-		this.tapsPerSecond = tapsPerSecond;
-		this.actionTime = actionTime;
-		this.actionPause = actionPause;
-		this.actionRepeat = actionRepeat;
+			// Setup a timer task on the object to run once every second.
+			if (autoTapTimer == null || autoTapTimerTask == null) {
+				autoTapTimer = new Timer();
 
-		if (autoTapTimer == null || autoTapTimerTask == null) {
-			autoTapTimer = new Timer();
-
-			autoTapTimerTask = autoTapTimer.scheduleTask(new Timer.Task() {
-				@Override
-				public void run() {
-					if (autoTap && !autoTapPaused) {
-						totalTaps += tapsPerSecond;
-						Gdx.app.log(TAG, "Running task 1");
+				autoTapTimerTask = autoTapTimer.scheduleTask(new Timer.Task() {
+					@Override
+					public void run() {
+						// Automatic tapping must be enabled, and not paused.
+						if (autoTap && !autoTapPaused) {
+							incrementTapCount(autoTapsPerSecond);
+						}
 					}
-					if (actionPause > 0) {
-						Gdx.app.log(TAG, "Pause > 0");
-						autoTapTimer.scheduleTask(new Timer.Task() {
-							@Override
-							public void run() {
-								Gdx.app.log(TAG, "Running task 2");
-								autoTapPaused = true;
-								if (!isScheduled()) {
-									Gdx.app.log(TAG, "Not scheduled");
-									autoTapPaused = false;
-								}
-							}
-						}, actionTime, actionPause, 0);
-						/*autoTapTimer.scheduleTask(new Timer.Task() {
-
-						});*/
-					}
-				}
-			}, 0, 1);
-		} else {
-			if (!autoTapTimerTask.isScheduled()) {
-				autoTapTimer.start();
+				}, 0, 1);
 			}
 		}
 	}
 
-	public void disableAutomaticTapping(boolean disableRepeat) {
-		this.autoTap = false;
+	/**
+	 * Temporarily pause automatic tapping.
+	 */
+	public void pauseAutomaticTapping() {
+		this.autoTapPaused = true;
 		if (autoTapTimer != null) {
 			autoTapTimer.stop();
 		}
-		if (disableRepeat) {
-			this.actionRepeat = false;
-		}
-		if (this.actionRepeat) {
-			new Timer().scheduleTask(new Timer.Task() {
-				@Override
-				public void run() {
-					enableAutomaticTapping();
-				}
-			}, this.actionPause, 1);
+	}
+
+	/**
+	 * Resume automatic tapping, if it was setup.
+	 */
+	public void resumeAutomaticTapping(){
+		if (this.autoTap && this.autoTapPaused) {
+			autoTapTimer.start();
+			this.autoTapPaused = false;
 		}
 	}
 
@@ -141,6 +134,9 @@ public class Box extends Actor implements Disposable {
 
 	@Override
 	public void dispose() {
+		if (autoTapTimer != null) {
+			autoTapTimer.clear();
+		}
 		img.dispose();
 	}
 }
